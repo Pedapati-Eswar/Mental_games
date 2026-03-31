@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock, Paper, Scissors Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .choices button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin: 10px;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    .scores {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rock, Paper, Scissors</h1>
+  <p>First to 5 points wins!</p>
+
+  <div class="choices">
+    <button onclick="playGame('rock')">Rock</button>
+    <button onclick="playGame('paper')">Paper</button>
+    <button onclick="playGame('scissors')">Scissors</button>
+  </div>
+
+  <div class="result" id="result"></div>
+  <div class="scores" id="scores"></div>
+
+  <script>
+    let userScore = 0;
+    let computerScore = 0;
+
+    function playGame(userChoice) {
+      const choices = ['rock', 'paper', 'scissors'];
+      const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+      let result = '';
+
+      if (userChoice === computerChoice) {
+        result = "It's a tie!";
+      } else if (
+        (userChoice === 'rock' && computerChoice === 'scissors') ||
+        (userChoice === 'paper' && computerChoice === 'rock') ||
+        (userChoice === 'scissors' && computerChoice === 'paper')
+      ) {
+        result = 'You win this round!';
+        userScore++;
+      } else {
+        result = 'Computer wins this round!';
+        computerScore++;
+      }
+
+      document.getElementById('result').innerText = `You chose ${userChoice}, computer chose ${computerChoice}. ${result}`;
+      document.getElementById('scores').innerText = `Your Score: ${userScore}, Computer Score: ${computerScore}`;
+
+      if (userScore === 5) {
+        alert('Congratulations! You won the game!');
+        resetGame();
+      } else if (computerScore === 5) {
+        alert('Computer won the game! Better luck next time.');
+        resetGame();
+      }
+    }
+
+    function resetGame() {
+      userScore = 0;
+      computerScore = 0;
+      document.getElementById('result').innerText = '';
+      document.getElementById('scores').innerText = '';
+    }
+  </script>
+</body>
+</html>

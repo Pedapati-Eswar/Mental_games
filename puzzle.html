@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Puzzle Game</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+}
+
+.puzzle-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    margin: 20px auto;
+}
+
+.puzzle-board div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.puzzle-board div.empty {
+    background-color: #f0f0f0;
+    cursor: default;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: #008CBA;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #005f73;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Number Puzzle Game</h1>
+        <div id="puzzle-board" class="puzzle-board"></div>
+        <button id="shuffle-button">Shuffle</button>
+        <p id="message"></p>
+    </div>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+        const puzzleBoard = document.getElementById('puzzle-board');
+        const shuffleButton = document.getElementById('shuffle-button');
+        const message = document.getElementById('message');
+        let tiles = [];
+        let emptyTileIndex = 8; // The empty tile starts at the bottom-right corner
+    
+        // Initialize the puzzle board
+        function initializeBoard() {
+            tiles = [1, 2, 3, 4, 5, 6, 7, 8, null]; // null represents the empty tile
+            renderBoard();
+        }
+    
+        // Render the puzzle board
+        function renderBoard() {
+            puzzleBoard.innerHTML = '';
+            tiles.forEach((tile, index) => {
+                const tileElement = document.createElement('div');
+                tileElement.textContent = tile;
+                tileElement.addEventListener('click', () => moveTile(index));
+                if (tile === null) {
+                    tileElement.classList.add('empty');
+                }
+                puzzleBoard.appendChild(tileElement);
+            });
+            checkWin();
+        }
+    
+        // Move a tile
+        function moveTile(index) {
+            if (isAdjacent(index, emptyTileIndex)) {
+                // Swap the clicked tile with the empty tile
+                [tiles[index], tiles[emptyTileIndex]] = [tiles[emptyTileIndex], tiles[index]];
+                emptyTileIndex = index; // Update the empty tile position
+                renderBoard();
+            }
+        }
+    
+        // Check if two tiles are adjacent
+        function isAdjacent(index1, index2) {
+            const row1 = Math.floor(index1 / 3);
+            const col1 = index1 % 3;
+            const row2 = Math.floor(index2 / 3);
+            const col2 = index2 % 3;
+            return Math.abs(row1 - row2) + Math.abs(col1 - col2) === 1;
+        }
+    
+        // Shuffle the tiles
+        function shuffleTiles() {
+            do {
+                for (let i = tiles.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+                }
+                emptyTileIndex = tiles.indexOf(null); // Update the empty tile position after shuffling
+            } while (!isSolvable(tiles)); // Ensure the puzzle is solvable
+            renderBoard();
+        }
+    
+        // Check if the puzzle is solvable
+        function isSolvable(tiles) {
+            let inversions = 0;
+            for (let i = 0; i < tiles.length - 1; i++) {
+                for (let j = i + 1; j < tiles.length; j++) {
+                    if (tiles[i] !== null && tiles[j] !== null && tiles[i] > tiles[j]) {
+                        inversions++;
+                    }
+                }
+            }
+            return inversions % 2 === 0;
+        }
+    
+        // Check if the puzzle is solved
+        function checkWin() {
+            const isSolved = tiles.slice(0, 8).every((tile, index) => tile === index + 1) && tiles[8] === null;
+            if (isSolved) {
+                message.textContent = 'Congratulations! You solved the puzzle!';
+            } else {
+                message.textContent = 'loseeS';
+            }
+        }
+    
+        // Event listener for the shuffle button
+        shuffleButton.addEventListener('click', shuffleTiles);
+    
+        // Initialize the game
+        initializeBoard();
+    });</script>
+</body>
+</html>
